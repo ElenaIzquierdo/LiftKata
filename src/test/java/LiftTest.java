@@ -9,7 +9,8 @@ class LiftTest {
 
     @Nested
     class RequestLift {
-        private final Lift lift = new Lift(0, LiftStatus.NOT_MOVING);
+        private final CurrentFloorMonitor currentFloorMonitor = new CurrentFloorMonitor(0, LiftStatus.NOT_MOVING);
+        private final Lift lift = new Lift(currentFloorMonitor);
         @Test
         void shouldRequestLiftCorrectly() {
             assertThat(lift.requestLift(2, "UP"), is(LiftStatus.ARRIVED));
@@ -17,7 +18,8 @@ class LiftTest {
 
         @Test
         void shouldReturnStatusNotWorkingIfLiftIsNotWorking() {
-            Lift brokenLift = new Lift(0, LiftStatus.NOT_WORKING);
+            CurrentFloorMonitor currentFloorMonitor = new CurrentFloorMonitor(0, LiftStatus.NOT_WORKING);
+            Lift brokenLift = new Lift(currentFloorMonitor);
 
             assertThat(brokenLift.requestLift(2, "UP"), is(LiftStatus.NOT_WORKING));
         }
@@ -25,24 +27,26 @@ class LiftTest {
 
     @Nested
     class RequestFloor {
-        private final Lift lift = new Lift(0, LiftStatus.NOT_MOVING);
+        private final CurrentFloorMonitor currentFloorMonitor = new CurrentFloorMonitor(0, LiftStatus.NOT_MOVING);
+        private final Lift lift = new Lift(currentFloorMonitor);
 
         @Test
         void shouldGoToDestinationFloorIfLiftIsWorking() {
             LiftStatus finalLiftStatus = lift.requestFloor(2);
 
             assertThat(finalLiftStatus, is(LiftStatus.ARRIVED));
-            assertThat(lift.getCurrentFloor(), is(2));
+            assertThat(lift.getCurrentFloorMonitor().getCurrentFloor(), is(2));
         }
 
         @Test
         void shouldNotMoveIfLiftIsNotWorking() {
-            Lift brokenLift = new Lift(0, LiftStatus.NOT_WORKING);
+            CurrentFloorMonitor currentFloorMonitor = new CurrentFloorMonitor(0, LiftStatus.NOT_WORKING);
+            Lift brokenLift = new Lift(currentFloorMonitor);
 
             LiftStatus finalLiftStatus = brokenLift.requestFloor(2);
 
             assertThat(finalLiftStatus, is(LiftStatus.NOT_WORKING));
-            assertThat(lift.getCurrentFloor(), is(0));
+            assertThat(brokenLift.getCurrentFloorMonitor().getCurrentFloor(), is(0));
         }
     }
 }

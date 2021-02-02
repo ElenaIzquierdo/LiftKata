@@ -1,27 +1,27 @@
 public class Lift {
 
-    private int currentFloor;
-    private final LiftStatus liftStatus;
+    private CurrentFloorMonitor currentFloorMonitor;
 
-    public Lift(int currentFloor, LiftStatus liftStatus){
-        this.currentFloor = currentFloor;
-        this.liftStatus = liftStatus;
+    public Lift(CurrentFloorMonitor currentFloorMonitor){
+        this.currentFloorMonitor = currentFloorMonitor;
     }
     public LiftStatus requestLift(int sourceFloor, String direction) {
+        LiftStatus liftStatus = currentFloorMonitor.getLiftStatus();
         if(liftStatus == LiftStatus.NOT_WORKING) return liftStatus;
 
-        currentFloor = sourceFloor;
+        currentFloorMonitor.setCurrentFloor(sourceFloor);
         return LiftStatus.ARRIVED;
     }
 
     public LiftStatus requestFloor(int destinationFloor) {
+        LiftStatus liftStatus = currentFloorMonitor.getLiftStatus();
         if(liftStatus == LiftStatus.NOT_WORKING) return liftStatus;
 
-        currentFloor = destinationFloor;
+        currentFloorMonitor.setCurrentFloor(destinationFloor);
         return LiftStatus.ARRIVED;
     }
 
-    public int getCurrentFloor() {
-        return currentFloor;
+    public CurrentFloorMonitor getCurrentFloorMonitor() {
+        return currentFloorMonitor;
     }
 }
